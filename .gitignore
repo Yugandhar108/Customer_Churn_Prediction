@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+# Customer records are local inputs; do not commit them.
+data/raw/*.csv

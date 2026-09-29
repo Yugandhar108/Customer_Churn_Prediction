@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leo Telecom Churn Project Wiki</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202b2b;
+      --muted: #52615f;
+      --paper: #f5f7f4;
+      --surface: #ffffff;
+      --line: #d5dfd9;
+      --accent: #176b5b;
+      --accent-soft: #e0f0e9;
+      --warm: #be552b;
+      --mono: "Cascadia Code", Consolas, monospace;
+      --sans: "Segoe UI", "Trebuchet MS", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.65 var(--sans); }
+    header { background: #183d39; color: #f4f6ef; padding: 40px max(24px, calc((100% - 1000px) / 2)); }
+    header p { margin: 8px 0 0; color: #c6d9ce; }
+    h1 { margin: 0; font-size: 2rem; line-height: 1.15; }
+    main { max-width: 1000px; margin: 28px auto 64px; padding: 0 24px; }
+    nav { display: flex; flex-wrap: wrap; gap: 8px 18px; border-bottom: 1px solid var(--line); padding: 0 0 16px; }
+    a { color: var(--accent); }
+    nav a { font-weight: 650; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    section { padding: 22px 0; border-bottom: 1px solid var(--line); }
+    h2 { margin: 0 0 10px; font-size: 1.35rem; }
+    h3 { margin: 20px 0 6px; font-size: 1.05rem; }
+    p { margin: 8px 0; }
+    code, pre { font-family: var(--mono); font-size: .92em; }
+    code { background: #e9efeb; padding: 2px 5px; border-radius: 3px; }
+    pre { overflow-x: auto; background: #20302e; color: #f4f6ef; padding: 16px; border-radius: 5px; }
+    pre code { background: transparent; padding: 0; }
+    .status { display: inline-block; color: #145746; background: var(--accent-soft); padding: 3px 9px; border-radius: 3px; font-weight: 700; }
+    .note { border-left: 4px solid var(--warm); padding: 10px 14px; background: #fff0e8; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; background: var(--surface); }
+    th, td { padding: 9px 11px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #e8efea; }
+    footer { color: var(--muted); font-size: .9rem; padding-top: 20px; }
+    @media (max-width: 600px) {
+      header { padding-top: 28px; padding-bottom: 28px; }
+      h1 { font-size: 1.65rem; }
+      main { padding: 0 16px; margin-top: 18px; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Leo Telecom | Customer Churn Prediction</h1>
+    <p>Project wiki: user guide, functional scope, technical notes, FAQs, and troubleshooting.</p>
+  </header>
+  <main>
+    <nav aria-label="Wiki sections">
+      <a href="#status">Status</a><a href="#user-guide">User Guide</a><a href="#functional">Functional Guide</a>
+      <a href="#technical">Technical Guide</a><a href="#faq">FAQs</a><a href="#troubleshooting">Troubleshooting</a>
+    </nav>
+
+    <section id="status">
+      <h2>Implementation Status</h2>
+      <p><span class="status">Phases 1-5 pipeline exercised</span> The notebook now loads, visualizes, fits all three models, and compares results using the synthetic demo data. Those results validate execution only; business findings await the full approved dataset.</p>
+      <table>
+        <thead><tr><th>Phase</th><th>Scope</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Environment setup, CSV loading, and initial data-quality inspection</td><td>Tested with the 205-row synthetic demo dataset</td></tr>
+          <tr><td>2</td><td>Pandas counts and customer subgroup extraction</td><td>Tested with the synthetic demo dataset</td></tr>
+          <tr><td>3</td><td>Churn distribution and internet-service charts</td><td>Tested with the synthetic demo dataset</td></tr>
+          <tr><td>4</td><td>Baseline, dropout, and multi-feature neural-network models</td><td>All three models fit and evaluated on the synthetic demo split</td></tr>
+          <tr><td>5</td><td>Model comparison and retention recommendations</td><td>Comparison ran; business conclusions await approved data</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="user-guide">
+      <h2>User Guide</h2>
+      <ol>
+        <li>Install a supported Python version and create a virtual environment. Follow setup commands in <a href="README.md">README.md</a>.</li>
+        <li>Place the authorized customer dataset at <code>data/raw/customer_churn.csv</code>.</li>
+        <li>Open <code>notebooks/phase_1_data_loading.ipynb</code> in VS Code or JupyterLab and run its cells from top to bottom.</li>
+        <li>Review the dataset shape, sample rows, dtypes, missing-value counts, and numeric conversion report.</li>
+        <li>Do not proceed to later phases until required fields and data-quality issues have been reviewed.</li>
+      </ol>
+      <p class="note">The current 205-row CSV contains five screenshot rows and 200 generated synthetic rows. Synthetic labels are deliberately associated with generated tenure patterns to exercise model fitting. Metrics and recommendations from it are not business findings. Replace it with the full approved dataset before interpretation. Raw CSV files are ignored by Git to reduce accidental sharing of customer records.</p>
+    </section>
+
+    <section id="functional">
+      <h2>Functional Guide</h2>
+      <h3>Business objective</h3>
+      <p>Estimate customer churn from account/service attributes and use measured results to inform retention actions. A model score is a prioritization signal, not proof that a customer will leave.</p>
+      <h3>Planned workflow</h3>
+      <ol>
+        <li>Load and inspect the source data; normalize <code>TotalCharges</code> to numeric.</li>
+        <li>Count male and DSL customers; extract female senior customers using mailed checks and customers meeting <code>tenure &lt; 10 OR TotalCharges &lt; 500</code>.</li>
+        <li>Visualize churn/stay proportions and internet-service category counts. The notebook validates expected categories and displays a count for each internet-service type, including zero-count categories.</li>
+        <li>Encode churn and train models using <code>tenure</code>, <code>tenure</code> with dropout, and then <code>tenure</code> plus monthly and total charges.</li>
+        <li>Compare held-out evaluation results and document evidence-based retention recommendations.</li>
+      </ol>
+      <p>Phase 2 reports male and DSL counts, extracts female senior citizens paying by mailed check, and extracts customers with tenure under 10 months or total charges under 500. The two extracted groups use separate DataFrame variables.</p>
+      <h3>Expected outputs</h3>
+      <p>Phases 1-3 output data-quality summaries, counts, filtered DataFrames, a churn-distribution pie chart, and an internet-service count bar chart. Phase 4 outputs test confusion matrices and training-accuracy plots after the data-size check passes. Phase 5 compares accuracy, churn precision/recall, and F1, then reports comparison notes; results from synthetic demo records validate execution only.</p>
+    </section>
+
+    <section id="technical">
+      <h2>Technical Guide</h2>
+      <h3>Stack and entry point</h3>
+      <p>Python, Pandas, NumPy, Matplotlib, Seaborn, scikit-learn, TensorFlow/Keras, and Jupyter. The Phase 1 entry point is <code>notebooks/phase_1_data_loading.ipynb</code>.</p>
+      <h3>Input contract</h3>
+      <p>CSV path: <code>data/raw/customer_churn.csv</code>. Phase 1 checks for the following columns:</p>
+      <pre><code>gender, SeniorCitizen, InternetService, PaymentMethod,
+tenure, MonthlyCharges, TotalCharges, Churn</code></pre>
+      <p><code>TotalCharges</code> is parsed with Pandas numeric conversion; blanks and invalid nonblank values are counted and reported. The source file is not overwritten.</p>
+      <p>The supplied data dictionary describes <code>Churn</code> as binary (<code>1</code>/<code>0</code>) and lists <code>customerID</code> as an identifier. Verify the CSV's actual target values before modeling, and exclude the identifier from predictive features.</p>
+      <p>Phase 4 maps numeric <code>0</code>/<code>1</code> or categorical <code>No</code>/<code>Yes</code> churn values to binary labels, excludes incomplete model rows with a reported count, reuses one stratified 80/20 split, and fits feature scalers on training data only. Fitting is gated unless both classes and both split partitions have enough rows. Run <code>python scripts/generate_synthetic_demo_data.py</code> to rebuild the deterministic synthetic extension.</p>
+      <p>Phase 5 derives test-set precision, recall, and F1 from each model's confusion matrix, compares accuracy deltas for dropout and added features, and treats the highest-recall model only as a candidate for further validation. No metrics are fabricated when models were not trained.</p>
+      <h3>Planned model/evaluation decisions</h3>
+      <p>The brief proposes 12- and 8-unit dense layers, sigmoid output, Adam, binary cross-entropy, and 150 epochs. Input dimensions must match the selected features. Use one reproducible, stratified train/test split across model comparisons. Alongside accuracy and confusion matrices, report churn-sensitive metrics such as precision, recall, F1, and ROC-AUC; choose a decision threshold based on the retention use case.</p>
+      <p>Dropout rates in the brief are 0.3 and 0.2. Compare training and validation behavior; dropout is a regularization technique, not a guarantee of higher test performance.</p>
+    </section>
+
+    <section id="faq">
+      <h2>FAQs</h2>
+      <h3>Where is the CSV?</h3>
+      <p>The current file is a 205-row synthetic demo that includes the five screenshot rows. Obtain the full approved CSV and replace <code>data/raw/customer_churn.csv</code> before interpreting model results for the business.</p>
+      <h3>Can I run Phase 1 without the CSV?</h3>
+      <p>If the CSV is absent, the workflow reports its expected path and skips data inspection. Add the approved CSV and rerun the cells to inspect actual records.</p>
+      <h3>Why is <code>TotalCharges</code> numeric conversion needed?</h3>
+      <p>CSV exports can represent blank charge values as whitespace or strings. Numeric parsing makes subsequent quality checks and model preparation reliable while surfacing invalid entries.</p>
+      <h3>What does the brief mean by an input layer with 12 nodes?</h3>
+      <p>In a dense network, the input shape is determined by the number of selected features. The stated 12-node and 8-node layers should be treated as hidden-layer widths unless the project owner clarifies otherwise.</p>
+      <h3>Why not judge models using accuracy alone?</h3>
+      <p>If churn and retention counts differ substantially, accuracy can hide poor churn detection. Recall, precision, F1, ROC-AUC, and the confusion matrix add useful context.</p>
+    </section>
+
+    <section id="troubleshooting">
+      <h2>Troubleshooting</h2>
+      <table>
+        <thead><tr><th>Symptom</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Dataset not found</td><td>Check that the filename is exactly <code>customer_churn.csv</code> and the file is in <code>data/raw/</code> under the project root.</td></tr>
+          <tr><td>Required-column error</td><td>Compare CSV headers with the input contract. Check for spelling, whitespace, and capitalization differences; do not silently rename fields until the data dictionary is checked.</td></tr>
+          <tr><td>Too many missing charge values</td><td>Review the raw <code>TotalCharges</code> cells and data dictionary. Phase 1 reports invalid values but does not impute them.</td></tr>
+          <tr><td>Import error for a library</td><td>Activate the project virtual environment and run <code>pip install -r requirements.txt</code> in that environment.</td></tr>
+          <tr><td>TensorFlow will not install</td><td>Confirm Python and OS compatibility for the selected TensorFlow release; use a supported Python version in a fresh project virtual environment.</td></tr>
+          <tr><td>Wrong project folder detected</td><td>Run the cells from the project root or the <code>notebooks/</code> folder, and confirm the root has both <code>README.md</code> and <code>data/</code>.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>Project references are preserved in <code>Input/</code>. This guide will be updated as each phase is implemented and reviewed.</footer>
+  </main>
+</body>
+</html>
