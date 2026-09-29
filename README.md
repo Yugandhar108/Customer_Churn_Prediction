@@ -56,11 +56,6 @@ data/raw/customer_churn.csv
 The current `customer_churn.csv` contains 205 rows: the five screenshot rows plus 200 generated demo rows. Some fields hidden in the screenshot were assumed. Synthetic churn labels are deliberately associated with generated tenure ranges so the model-fitting path can be exercised. The resulting metrics are not representative and must not be used for business conclusions.
 
 To recreate the deterministic demo extension while preserving the original five rows, run:
-
-```powershell
-python scripts/generate_synthetic_demo_data.py
-```
-
 The generator replaces its existing `SYNTH-` rows on rerun, so it does not keep appending duplicates. Replace the demo CSV with the full approved dataset before real model evaluation.
 
 Open `notebooks/phase_1_data_loading.ipynb` in VS Code or JupyterLab and run its cells from top to bottom. The notebook reports the expected location if the CSV is missing and does not generate data automatically. The separate demo generator creates synthetic rows only when explicitly run; do not use its output for business conclusions.
@@ -82,7 +77,4 @@ The notebook creates one reproducible stratified 80/20 split shared by all three
 When Phase 4 has results for all three models, the notebook compares shared-test-set accuracy, churn precision, churn recall, and F1. It reports accuracy changes for dropout and the additional features and identifies the highest-recall model as a candidate for further validation. On the synthetic demo data these outputs verify the pipeline only; actual recommendations require training and evaluation on the full approved dataset.
 
 ## Source material
-
-The supplied project brief, project-description PDF, and data dictionary are retained in `Input/`. Use them as the reference for assignment requirements and field definitions. Raw CSV files are excluded by `.gitignore` to reduce the risk of committing customer records; include only approved, appropriately sanitized data in any shared deliverable.
-
 For functional and technical guidance, FAQs, and troubleshooting, see [Wiki.html](Wiki.html).
